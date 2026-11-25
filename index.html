@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A little something for you 🌻</title>
+<style>
+  :root{
+    --bg1:#fff4ec; --bg2:#ffe3ea;
+    --ink:#4a2c3a; --soft:#9b7284;
+    --bubble:#ffffff; --me:#ff7a98; --me2:#ff9d7a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    min-height:100vh;
+    font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
+    color:var(--ink);
+    background:linear-gradient(160deg,var(--bg1),var(--bg2));
+    display:flex;justify-content:center;
+    padding:32px 16px 80px;
+    overflow-x:hidden;
+  }
+  .wrap{width:100%;max-width:460px;text-align:center}
+  .big{font-size:64px;display:inline-block;animation:sway 3s ease-in-out infinite}
+  @keyframes sway{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+  h1{font-size:28px;margin:10px 0 6px;line-height:1.25}
+  .sub{color:var(--soft);font-size:15px;margin-bottom:26px}
+
+  .chat{display:flex;flex-direction:column;gap:14px;text-align:left}
+  .label{
+    font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--soft);margin:6px 0 -6px 6px;
+  }
+  .msg{
+    max-width:86%;padding:12px 16px;border-radius:20px;
+    font-size:16px;line-height:1.45;
+    box-shadow:0 4px 14px rgba(180,90,110,.12);
+    opacity:0;transform:translateY(14px) scale(.97);
+    transition:opacity .5s ease,transform .5s ease;
+  }
+  .msg.show{opacity:1;transform:none}
+  .them{background:var(--bubble);border-bottom-left-radius:6px;align-self:flex-start}
+  .you{
+    background:linear-gradient(135deg,var(--me),var(--me2));
+    color:#fff;border-bottom-right-radius:6px;align-self:flex-end;
+  }
+  .label.show{opacity:1}
+
+  .controls{margin-top:30px;min-height:70px}
+  button{
+    font:inherit;font-weight:600;font-size:17px;
+    border:none;cursor:pointer;color:#fff;
+    background:linear-gradient(135deg,var(--me),var(--me2));
+    padding:14px 30px;border-radius:999px;
+    box-shadow:0 8px 20px rgba(255,122,152,.4);
+    transition:transform .15s ease;
+  }
+  button:hover{transform:scale(1.05)}
+  button:active{transform:scale(.97)}
+  button.ghost{
+    background:#fff;color:var(--me);box-shadow:0 4px 12px rgba(0,0,0,.08);
+    margin-left:8px;
+  }
+
+  .finale{display:none;margin-top:34px}
+  .finale.show{display:block;animation:pop .7s ease}
+  @keyframes pop{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
+  .finale h2{font-size:30px;margin-bottom:10px}
+  .finale p{color:var(--soft);font-size:16px;line-height:1.5}
+  footer{margin-top:46px;color:var(--soft);font-size:13px}
+
+  .heart{
+    position:fixed;bottom:-30px;font-size:24px;pointer-events:none;
+    animation:rise linear forwards;z-index:10;
+  }
+  @keyframes rise{to{transform:translateY(-110vh) rotate(25deg);opacity:0}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="big">🌻</div>
+  <h1>Hey you… are you still mad at me? 🥺</h1>
+  <p class="sub">tap the button below, I have a few things to say</p>
+
+  <div class="chat" id="chat"></div>
+
+  <div class="controls" id="controls">
+    <button id="next">Okay, go on… 👀</button>
+  </div>
+
+  <div class="finale" id="finale">
+    <h2>There it is. That smile. 😊</h2>
+    <p>I knew it was hiding in there somewhere.<br>
+       Thank you for letting me make it up to you.<br>
+       I'm always on your side. 💛</p>
+  </div>
+
+  <footer>made with 🌻 just for you</footer>
+</div>
+
+<script>
+  // ✏️ Edit these lines to make it yours.
+  const script = [
+    {label:"the sorry",        who:"you",  text:"First things first: I'm really sorry. 🙏"},
+    {label:"the truth",        who:"you",  text:"I hate seeing you upset, especially when I'm the reason."},
+    {label:"your side",        who:"them", text:"Hmph. I'm still angry. 😤"},
+    {label:"fair enough",      who:"you",  text:"Fair. You have every right to be. But can I say something?"},
+    {label:"your side",        who:"them", text:"…fine. Say it. 🙄"},
+    {label:"a small reminder", who:"you",  text:"You're the funniest, kindest and most wonderful person I know. And even your angry face is cute. 🌟"},
+    {label:"your side",        who:"them", text:"Stop trying to butter me up. 😒"},
+    {label:"honesty",          who:"you",  text:"I'm not. I'm just stating facts. Ask anyone. 😇"},
+    {label:"your side",        who:"them", text:"You always think words will fix everything. 🙄"},
+    {label:"the promise",      who:"you",  text:"Not everything. That's why I'm going to listen properly this time, without interrupting or making excuses."},
+    {label:"your side",        who:"them", text:"Even without making excuses? That's new. 🤨"},
+    {label:"the effort",       who:"you",  text:"I know. I'm making an effort. You can tell because I built an entire website for you. 💻"},
+    {label:"your side",        who:"them", text:"…you made a website?? 😳"},
+    {label:"the proof",        who:"you",  text:"Yes. Hours of work. Several typos. One very serious sunflower. 🌻"},
+    {label:"your side",        who:"them", text:"The sunflower is kind of cute, I'll admit. 🙂"},
+    {label:"the plan",         who:"you",  text:"Then here's my offer: a chai/coffee, your favourite snack, and I'll listen to everything you want to say. ☕"},
+    {label:"the bribe",        who:"you",  text:"And I'll take the blame for everything, even the stuff that isn't my fault. 😌"},
+    {label:"your side",        who:"them", text:"Everything? Even the things that are definitely your fault? 😏"},
+    {label:"the deal",         who:"you",  text:"Especially those. I'm very brave today. 🫡"},
+    {label:"the plot twist",   who:"them", text:"…okay, that made me smile a tiny bit. 🙂"},
+    {label:"caught you",       who:"you",  text:"I SAW THAT. The smile counts. I'm taking it. 😎"},
+    {label:"the truth",        who:"you",  text:"The best part of my day is making you laugh. So even if you're still a little angry, I'll keep trying. 💛"}
+  ];
+
+  const chat = document.getElementById('chat');
+  const controls = document.getElementById('controls');
+  const finale = document.getElementById('finale');
+  let i = 0;
+
+  function addMsg(item){
+    const lab = document.createElement('div');
+    lab.className = 'label';
+    lab.textContent = item.label;
+    lab.style.alignSelf = item.who === 'you' ? 'flex-end' : 'flex-start';
+    lab.style.marginRight = item.who === 'you' ? '6px' : '0';
+    const m = document.createElement('div');
+    m.className = 'msg ' + item.who;
+    m.textContent = item.text;
+    chat.append(lab, m);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>m.classList.add('show')));
+    m.scrollIntoView({behavior:'smooth',block:'center'});
+  }
+
+  function hearts(n=30){
+    const set = ['💛','🌻','💖','✨','🌷','😊'];
+    for(let k=0;k<n;k++){
+      const h = document.createElement('div');
+      h.className = 'heart';
+      h.textContent = set[Math.floor(Math.random()*set.length)];
+      h.style.left = Math.random()*100 + 'vw';
+      h.style.fontSize = (18+Math.random()*24) + 'px';
+      h.style.animationDuration = (3+Math.random()*3) + 's';
+      h.style.animationDelay = (Math.random()*1.2) + 's';
+      document.body.appendChild(h);
+      setTimeout(()=>h.remove(), 7500);
+    }
+  }
+
+  document.getElementById('next').addEventListener('click', ()=>{
+    addMsg(script[i]); i++;
+    document.getElementById('next').textContent = 'Tell me more 💬';
+    if(i >= script.length){
+      controls.innerHTML = '<button id="smile">Okay fine, I\'m smiling 😊</button>';
+      document.getElementById('smile').addEventListener('click', ()=>{
+        hearts(40);
+        finale.classList.add('show');
+        finale.scrollIntoView({behavior:'smooth',block:'center'});
+        controls.innerHTML = '<button class="ghost" id="again">More hearts 💛</button>';
+        document.getElementById('again').addEventListener('click', ()=>hearts(40));
+      });
+    }
+  });
+</script>
+</body>
+</html>
